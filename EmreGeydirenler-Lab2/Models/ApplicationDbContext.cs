@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmreGeydirenler_Lab2.Models
 {
+    // Central EF Core context for app entities, relationships, and sample seed data.
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -24,6 +25,7 @@ namespace EmreGeydirenler_Lab2.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            // Store Admin and Customer in one table using a discriminator column.
             modelBuilder.Entity<BaseUser>()
                 .HasDiscriminator<string>("UserType")
                 .HasValue<Admin>("Admin")

@@ -134,6 +134,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         private int? GetCurrentCustomerId()
         {
+            // Reuses the authenticated claim id for customer-scoped invoice operations.
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(userIdClaim, out var customerId) ? customerId : null;
         }

@@ -26,6 +26,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    // Apply pending EF Core migrations at startup for local/student environments.
     dbContext.Database.Migrate();
 }
 
@@ -40,6 +41,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// Authentication must run before authorization checks.
 app.UseAuthentication();
 app.UseAuthorization();
 

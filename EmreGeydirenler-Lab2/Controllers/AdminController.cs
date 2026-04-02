@@ -495,6 +495,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         private async Task LogAdminAction(string actionDescription)
         {
+            // Uses the authenticated admin claim to link each admin action to audit trails.
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!int.TryParse(userIdClaim, out var adminId))
             {

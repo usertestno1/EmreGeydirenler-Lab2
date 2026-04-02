@@ -203,6 +203,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         private int? GetCurrentCustomerId()
         {
+            // Reads the logged-in customer's id from cookie claims.
             if (!User.IsInRole("Customer"))
             {
                 return null;

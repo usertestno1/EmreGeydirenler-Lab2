@@ -103,6 +103,7 @@ namespace EmreGeydirenler_Lab2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Security(AccountSetting input, string? newPassword)
         {
+            // Updates toggle settings every save; password updates only when a new value is provided.
             var customerId = GetCurrentCustomerId();
             if (customerId is null)
             {
@@ -174,6 +175,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         private int? GetCurrentCustomerId()
         {
+            // Restricts settings operations to the authenticated customer account.
             if (!User.IsInRole("Customer"))
             {
                 return null;

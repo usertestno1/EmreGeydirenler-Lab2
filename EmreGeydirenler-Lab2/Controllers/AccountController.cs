@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmreGeydirenler_Lab2.Controllers
 {
+    // Handles authentication flow for both Admin and Customer users.
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -147,6 +148,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         private async Task LogSuccessfulLoginAsync(int userId, string role, string email)
         {
+            // Keep a simple audit entry for successful sign-ins.
             _context.AuditTrails.Add(new AuditTrail
             {
                 ActionDescription = $"Successful {role} login: {email}",
