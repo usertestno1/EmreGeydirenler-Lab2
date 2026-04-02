@@ -137,10 +137,11 @@ namespace EmreGeydirenler_Lab2.Controllers
                 setting.ReceiveEmailAlerts = input.ReceiveEmailAlerts;
             }
 
-            var passwordChanged = !string.IsNullOrWhiteSpace(newPassword);
+            var trimmedNewPassword = newPassword?.Trim();
+            var passwordChanged = !string.IsNullOrWhiteSpace(trimmedNewPassword);
             if (passwordChanged)
             {
-                customer.Password = newPassword!.Trim();
+                customer.Password = trimmedNewPassword!;
             }
 
             _context.AuditTrails.Add(new AuditTrail
@@ -166,7 +167,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
             await _context.SaveChangesAsync();
             TempData["SecurityMessage"] = passwordChanged
-                ? "Security settings updated successfully. Your password was also updated."
+                ? "Security settings updated successfully. The password for your current account was updated."
                 : "Security settings updated successfully.";
             return RedirectToAction(nameof(Security));
         }

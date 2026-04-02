@@ -130,7 +130,10 @@ namespace EmreGeydirenler_Lab2.Controllers
                 return View(model);
             }
 
-            var emailExists = await _context.Customers.AnyAsync(c => c.Email == model.Email.Trim());
+            var trimmedEmail = model.Email.Trim();
+            var normalizedEmail = trimmedEmail.ToUpper();
+
+            var emailExists = await _context.Customers.AnyAsync(c => c.Email.ToUpper() == normalizedEmail);
             if (emailExists)
             {
                 ModelState.AddModelError(nameof(model.Email), "A customer with this email already exists.");
@@ -141,7 +144,7 @@ namespace EmreGeydirenler_Lab2.Controllers
             {
                 FirstName = model.FirstName.Trim(),
                 LastName = model.LastName.Trim(),
-                Email = model.Email.Trim(),
+                Email = trimmedEmail,
                 Password = model.Password,
                 CompanyName = model.CompanyName.Trim(),
                 TaxNumber = model.TaxNumber.Trim(),
@@ -222,8 +225,11 @@ namespace EmreGeydirenler_Lab2.Controllers
                 return NotFound();
             }
 
+            var trimmedEmail = model.Email.Trim();
+            var normalizedEmail = trimmedEmail.ToUpper();
+
             var emailExists = await _context.Customers
-                .AnyAsync(c => c.Id != id && c.Email == model.Email.Trim());
+                .AnyAsync(c => c.Id != id && c.Email.ToUpper() == normalizedEmail);
 
             if (emailExists)
             {
@@ -259,7 +265,7 @@ namespace EmreGeydirenler_Lab2.Controllers
             }
             customer.FirstName = model.FirstName.Trim();
             customer.LastName = model.LastName.Trim();
-            customer.Email = model.Email.Trim();
+            customer.Email = trimmedEmail;
             customer.CompanyName = model.CompanyName.Trim();
             customer.TaxNumber = model.TaxNumber.Trim();
             customer.Address = model.Address.Trim();

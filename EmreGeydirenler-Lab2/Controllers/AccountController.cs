@@ -67,10 +67,11 @@ namespace EmreGeydirenler_Lab2.Controllers
 
             var email = model.Email.Trim();
             var password = model.Password.Trim();
+            var normalizedEmail = email.ToUpper();
 
             var admin = await _context.Set<Admin>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
+                .FirstOrDefaultAsync(a => a.Email.ToUpper() == normalizedEmail && a.Password == password);
 
             if (admin is not null)
             {
@@ -100,7 +101,7 @@ namespace EmreGeydirenler_Lab2.Controllers
 
             var customer = await _context.Set<Customer>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Email == email && c.Password == password);
+                .FirstOrDefaultAsync(c => c.Email.ToUpper() == normalizedEmail && c.Password == password);
 
             if (customer is not null)
             {
