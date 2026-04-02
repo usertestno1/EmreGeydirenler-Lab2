@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Linq;
 using EmreGeydirenler_Lab2.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,14 +35,27 @@ namespace EmreGeydirenler_Lab2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            var allowedKeys = new[] { nameof(LoginViewModel.Email), nameof(LoginViewModel.Password) };
+            var keysToRemove = ModelState.Keys
+                .Where(k => !string.IsNullOrEmpty(k) && !allowedKeys.Contains(k))
+                .ToList();
+
+            foreach (var key in keysToRemove)
+            {
+                ModelState.Remove(key);
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var admin = await _context.Admins
+            var email = model.Email.Trim();
+            var password = model.Password.Trim();
+
+            var admin = await _context.Set<Admin>()
                 .AsNoTracking()
-                .SingleOrDefaultAsync(a => a.Email == model.Email && a.Password == model.Password);
+                .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
 
             if (admin is null)
             {

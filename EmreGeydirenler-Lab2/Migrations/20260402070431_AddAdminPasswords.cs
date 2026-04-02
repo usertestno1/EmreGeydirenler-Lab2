@@ -19,6 +19,41 @@ namespace EmreGeydirenler_Lab2.Migrations
                 oldClrType: typeof(string),
                 oldType: "TEXT",
                 oldMaxLength: 100);
+
+            migrationBuilder.UpdateData(
+                table: "BaseUsers",
+                keyColumn: "Id",
+                keyValue: 1001,
+                column: "Password",
+                value: "Admin@123");
+
+            migrationBuilder.UpdateData(
+                table: "BaseUsers",
+                keyColumn: "Id",
+                keyValue: 1002,
+                column: "Password",
+                value: "Support@123");
+
+            migrationBuilder.UpdateData(
+                table: "BaseUsers",
+                keyColumn: "Id",
+                keyValue: 1003,
+                column: "Password",
+                value: "Security@123");
+
+            migrationBuilder.UpdateData(
+                table: "BaseUsers",
+                keyColumn: "Id",
+                keyValue: 1004,
+                column: "Password",
+                value: "Billing@123");
+
+            migrationBuilder.UpdateData(
+                table: "BaseUsers",
+                keyColumn: "Id",
+                keyValue: 1005,
+                column: "Password",
+                value: "Product@123");
         }
 
         /// <inheritdoc />

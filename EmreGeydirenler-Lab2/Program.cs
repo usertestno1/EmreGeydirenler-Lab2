@@ -23,6 +23,38 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+
+    var seededAdminPasswords = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["aylin.demir@qutech.com"] = "Admin@123",
+        ["mert.kara@qutech.com"] = "Support@123",
+        ["selin.yilmaz@qutech.com"] = "Security@123",
+        ["can.aydin@qutech.com"] = "Billing@123",
+        ["ece.sahin@qutech.com"] = "Product@123"
+    };
+
+    var adminsToFix = dbContext.Admins
+        .Where(a => string.IsNullOrWhiteSpace(a.Password))
+        .ToList();
+
+    foreach (var admin in adminsToFix)
+    {
+        if (seededAdminPasswords.TryGetValue(admin.Email, out var password))
+        {
+            admin.Password = password;
+        }
+    }
+
+    if (adminsToFix.Count > 0)
+    {
+        dbContext.SaveChanges();
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -41,7 +73,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Account}/{action=Login}/{id?}")
     .WithStaticAssets();
 
 
