@@ -4,7 +4,8 @@
     string currentPlanName = ViewBag.CurrentPlanName ?? "Current";
     string newPlanName = ViewBag.NewPlanName ?? "Selected";
     decimal newPlanPrice = ViewBag.NewPlanPrice ?? 0m;
-    decimal difference = newPlanPrice - currentPrice;
+    decimal difference = ViewBag.PriceDifference ?? (newPlanPrice - currentPrice);
+    int selectedPlanId = ViewBag.SelectedPlanId ?? 0;
 }
 
 <div class="container mt-5">
@@ -28,13 +29,21 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td>Current Plan Monthly Rate (@currentPlanName)</td>
+                                <td class="text-end">AUD @currentPrice.ToString("F2")</td>
+                            </tr>
+                            <tr>
                                 <td>New Plan Monthly Rate (@newPlanName)</td>
-                                <td class="text-end">$@newPlanPrice.ToString("F2")</td>
+                                <td class="text-end">AUD @newPlanPrice.ToString("F2")</td>
+                            </tr>
+                            <tr>
+                                <td>Monthly Price Difference</td>
+                                <td class="text-end">AUD @difference.ToString("F2")</td>
                             </tr>
                             <tr class="fw-bold">
                                 <td>Due Today</td>
                                 <td class="text-end text-success">
-                                    @(difference > 0 ? $"${difference.ToString("F2")}" : "$0.00")
+                                    @(difference > 0 ? $"AUD {difference.ToString("F2")}" : "AUD 0.00")
                                 </td>
                             </tr>
                         </tbody>
@@ -44,21 +53,22 @@
                         <h5 class="alert-heading fw-bold">Important Note:</h5>
                         @if (difference <= 0)
                         {
-                            <p class="mb-0">No extra payment is required today. The new pricing will apply from your next billing cycle.</p>
+                            <p class="mb-1">No extra payment is required today for this change.</p>
+                            <p class="mb-0">From your next monthly billing cycle, the new plan price of <strong>AUD @newPlanPrice.ToString("F2")</strong> will apply.</p>
                         }
                         else
                         {
-                            <p class="mb-0">An extra payment of <strong>$@difference.ToString("F2")</strong> is required today to cover this billing period. Future renewals will use the new monthly rate.</p>
+                            <p class="mb-1">You will pay <strong>AUD @difference.ToString("F2")</strong> now for the current billing period.</p>
+                            <p class="mb-0">From your next monthly billing cycle, the new plan price of <strong>AUD @newPlanPrice.ToString("F2")</strong> will apply.</p>
                         }
                     </div>
 
-                    <div class="mt-5 d-flex justify-content-center gap-3">
-                        <button type="button" class="btn btn-success btn-lg px-5 shadow"
-                                onclick="alert('Transaction Completed! Your @newPlanName subscription is now processing.'); window.location.href='/Subscription/MySubscription';">
-                            Confirm & Pay
-                        </button>
+                    <form asp-action="ConfirmUpgrade" method="post" class="mt-5 d-flex justify-content-center gap-3">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="planId" value="@selectedPlanId" />
+                        <button type="submit" class="btn btn-success btn-lg px-5 shadow">Confirm Upgrade</button>
                         <a asp-action="Plans" class="btn btn-outline-secondary btn-lg px-5">Cancel</a>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

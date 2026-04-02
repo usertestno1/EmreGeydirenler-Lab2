@@ -8,7 +8,6 @@ namespace EmreGeydirenler_Lab2.Controllers
         // Displays the main landing page for guests and users
         public IActionResult Index()
         {
-            // For Lab 2, we just return the view. No complex backend logic needed yet.
             return View();
         }
 

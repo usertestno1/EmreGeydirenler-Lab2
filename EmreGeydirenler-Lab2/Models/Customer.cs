@@ -6,6 +6,11 @@ namespace EmreGeydirenler_Lab2.Models
     // Customer inherits from BaseUser. It represents the clients using our QuTech SAAS platform.
     public class Customer : BaseUser
     {
+        [Required(ErrorMessage = "Password is required for customer login.")]
+        [StringLength(100, ErrorMessage = "Password cannot exceed 100 characters.")]
+        [DataType(DataType.Password)]
+        public required string Password { get; set; }
+
         [Required(ErrorMessage = "Company Name is required for billing and invoice purposes.")]
         [StringLength(100, ErrorMessage = "Company Name cannot be longer than 100 characters.")]
         [Display(Name = "Company Name")]

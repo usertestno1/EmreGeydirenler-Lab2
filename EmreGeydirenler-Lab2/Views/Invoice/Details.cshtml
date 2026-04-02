@@ -17,11 +17,11 @@
             <hr />
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <span class="fw-bold fs-5">Total Amount Due:</span>
-                <span class="fs-3 text-success fw-bold">$@Model.TotalAmount.ToString("0.00")</span>
+                <span class="fs-3 text-success fw-bold">AUD @Model.TotalAmount.ToString("0.00")</span>
             </div>
             <div class="mt-5 text-end">
                 <a asp-action="Index" class="btn btn-outline-secondary">Back to Invoices</a>
-                <button class="btn btn-primary ms-2">Download PDF</button>
+                <button type="button" class="btn btn-primary ms-2" onclick="window.print()">Print Invoice</button>
             </div>
         </div>
     </div>

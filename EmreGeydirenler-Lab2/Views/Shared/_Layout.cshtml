@@ -1,5 +1,7 @@
 ﻿@{
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var isAdmin = User.IsInRole("Admin");
+    var isCustomer = User.IsInRole("Customer");
 }
 
 <!DOCTYPE html>
@@ -23,24 +25,53 @@
 
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Subscription" asp-action="Plans">Plans</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Subscription" asp-action="MySubscription">My Subscription</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Invoice" asp-action="Index">Invoices</a>
-                        </li>
+                        @if (!isAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        }
+                        else if (isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="AuditLogs">Audit Logs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="ManagePlans">Manage Plans</a>
+                            </li>
+                        }
+                        else if (isCustomer)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Subscription" asp-action="Plans">Plans</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Subscription" asp-action="MySubscription">My Subscription</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Invoice" asp-action="Index">Invoices</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="CustomerSettings" asp-action="Profile">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="CustomerSettings" asp-action="Security">Security</a>
+                            </li>
+                        }
                     </ul>
 
                     <div class="d-flex align-items-center gap-2">
                         @if (isAuthenticated)
                         {
-                            <a class="btn btn-outline-light btn-sm" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
                             <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger btn-sm">Logout</button>

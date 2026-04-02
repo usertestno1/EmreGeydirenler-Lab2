@@ -1,14 +1,14 @@
 @model EmreGeydirenler_Lab2.Models.LoginViewModel
 @{
-    ViewData["Title"] = "Admin Login";
+    ViewData["Title"] = "QuTech Login";
 }
 
 <div class="row justify-content-center mt-5">
     <div class="col-lg-5 col-md-7">
         <div class="card shadow border-0">
             <div class="card-body p-4 p-md-5">
-                <h3 class="fw-bold text-center mb-2">QuTech Admin Panel</h3>
-                <p class="text-muted text-center mb-4">Sign in with your administrator account.</p>
+                <h3 class="fw-bold text-center mb-2">QuTech Portal Login</h3>
+                <p class="text-muted text-center mb-4">Sign in with your QuTech account.</p>
 
                 <form asp-action="Login" asp-controller="Account" method="post" novalidate>
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -28,6 +28,12 @@
                     <div class="d-grid">
                         <button type="submit" class="btn btn-dark btn-lg">Login</button>
                     </div>
+
+                    <p class="small text-muted text-center mt-3 mb-0">
+                        Need an account? Please email
+                        <a href="mailto:support@qutech.com">support@qutech.com</a>
+                        to request access.
+                    </p>
                 </form>
             </div>
         </div>

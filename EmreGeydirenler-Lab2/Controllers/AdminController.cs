@@ -43,7 +43,7 @@ namespace EmreGeydirenler_Lab2.Controllers
                 .SumAsync();
 
             ViewBag.TotalCustomers = totalCustomers;
-            ViewBag.MonthlyRevenue = totalMonthlyRevenue.ToString("C");
+            ViewBag.MonthlyRevenue = $"AUD {totalMonthlyRevenue:0.00}";
             ViewBag.ActiveSubscriptions = activeSubscriptions;
 
             return View();

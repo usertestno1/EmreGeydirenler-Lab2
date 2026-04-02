@@ -21,16 +21,18 @@ namespace EmreGeydirenler_Lab2.Controllers
         [HttpGet]
         [AllowAnonymous]
         /// <summary>
-        /// Displays the administrator login page.
+        /// Displays the shared login page for administrators and customers.
         /// </summary>
         /// <returns>
-        /// The login view for anonymous users, or a redirect to the admin dashboard when already authenticated.
+        /// The login view for anonymous users, or a redirect to the dashboard when already authenticated.
         /// </returns>
         public IActionResult Login()
         {
             if (User.Identity?.IsAuthenticated == true)
             {
-                return RedirectToAction("Dashboard", "Admin");
+                return User.IsInRole("Admin")
+                    ? RedirectToAction("Dashboard", "Admin")
+                    : RedirectToAction("MySubscription", "Subscription");
             }
 
             return View(new LoginViewModel { Email = string.Empty, Password = string.Empty });
@@ -40,11 +42,11 @@ namespace EmreGeydirenler_Lab2.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         /// <summary>
-        /// Authenticates an administrator using submitted credentials and issues an authentication cookie.
+        /// Authenticates an admin or customer and issues an authentication cookie.
         /// </summary>
         /// <param name="model">The login form data containing email and password.</param>
         /// <returns>
-        /// Redirects to the admin dashboard when authentication succeeds; otherwise returns the login view with errors.
+        /// Redirects to role-specific landing page when authentication succeeds; otherwise returns the login view with errors.
         /// </returns>
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -70,34 +72,64 @@ namespace EmreGeydirenler_Lab2.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
 
-            if (admin is null)
+            if (admin is not null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid email or password.");
-                return View(model);
+                var adminClaims = new List<Claim>
+                {
+                    new(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+                    new(ClaimTypes.Name, $"{admin.FirstName} {admin.LastName}"),
+                    new(ClaimTypes.Email, admin.Email),
+                    new(ClaimTypes.Role, "Admin")
+                };
+
+                var adminIdentity = new ClaimsIdentity(adminClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var adminPrincipal = new ClaimsPrincipal(adminIdentity);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    adminPrincipal,
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
+                    });
+
+                await LogSuccessfulLoginAsync(admin.Id, "Admin", admin.Email);
+                return RedirectToAction("Dashboard", "Admin");
             }
 
-            var claims = new List<Claim>
+            var customer = await _context.Set<Customer>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Email == email && c.Password == password);
+
+            if (customer is not null)
             {
-                new(ClaimTypes.NameIdentifier, admin.Id.ToString()),
-                new(ClaimTypes.Name, $"{admin.FirstName} {admin.LastName}"),
-                new(ClaimTypes.Email, admin.Email),
-                new(ClaimTypes.Role, "Admin"),
-                new("AdminRole", admin.AdminRole)
-            };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties
+                var customerClaims = new List<Claim>
                 {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
-                });
+                    new(ClaimTypes.NameIdentifier, customer.Id.ToString()),
+                    new(ClaimTypes.Name, $"{customer.FirstName} {customer.LastName}"),
+                    new(ClaimTypes.Email, customer.Email),
+                    new(ClaimTypes.Role, "Customer")
+                };
 
-            return RedirectToAction("Dashboard", "Admin");
+                var customerIdentity = new ClaimsIdentity(customerClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var customerPrincipal = new ClaimsPrincipal(customerIdentity);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    customerPrincipal,
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
+                    });
+
+                await LogSuccessfulLoginAsync(customer.Id, "Customer", customer.Email);
+                return RedirectToAction("MySubscription", "Subscription");
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid email or password.");
+            return View(model);
         }
 
         [HttpPost]
@@ -110,6 +142,20 @@ namespace EmreGeydirenler_Lab2.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
+        }
+
+        private async Task LogSuccessfulLoginAsync(int userId, string role, string email)
+        {
+            _context.AuditTrails.Add(new AuditTrail
+            {
+                ActionDescription = $"Successful {role} login: {email}",
+                Timestamp = DateTime.UtcNow,
+                IPAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                UserId = userId,
+                User = null!
+            });
+
+            await _context.SaveChangesAsync();
         }
     }
 }

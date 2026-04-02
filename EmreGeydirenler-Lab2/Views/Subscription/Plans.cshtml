@@ -10,6 +10,7 @@
     <div class="row justify-content-center">
         @foreach (var plan in Model)
         {
+            var isCurrentPlan = ViewBag.CurrentPlanId is int currentPlanId && currentPlanId == plan.Id;
             var storageLimit = plan.PlanName switch
             {
                 "Starter" => "5 GB",
@@ -30,14 +31,18 @@
             };
 
             <div class="col-md-4 mb-4">
-                <div class="card h-100 text-center shadow border-0">
-                    <div class="card-header bg-dark text-white py-3">
+                <div class="card h-100 text-center shadow border-0 @(isCurrentPlan ? "bg-light opacity-75" : string.Empty)">
+                    <div class="card-header @(isCurrentPlan ? "bg-secondary" : "bg-dark") text-white py-3">
                         <h4 class="my-0 fw-bold">@plan.PlanName</h4>
+                        @if (isCurrentPlan)
+                        {
+                            <span class="badge bg-warning text-dark mt-2">Current Plan</span>
+                        }
                     </div>
 
                     <div class="card-body py-4">
                         <h1 class="card-title fw-bold">
-                            $@plan.MonthlyPrice<small class="text-muted fw-light">/mo</small>
+                            AUD @plan.MonthlyPrice.ToString("0.00")<small class="text-muted fw-light">/mo</small>
                         </h1>
                         <ul class="list-unstyled mt-4 mb-4 text-start px-4">
                             <li class="mb-2"><span class="text-primary me-2">✔</span><strong>@plan.MaxUsers</strong> Users</li>
@@ -48,8 +53,15 @@
                     </div>
 
                     <div class="card-footer bg-transparent border-0 pb-4 px-4">
-                        <a asp-action="Upgrade" asp-route-planId="@plan.Id"
-                           class="w-100 btn btn-lg btn-outline-primary shadow-sm fw-bold">Select Plan</a>
+                        @if (isCurrentPlan)
+                        {
+                            <button type="button" class="w-100 btn btn-lg btn-secondary shadow-sm" disabled>Current Plan</button>
+                        }
+                        else
+                        {
+                            <a asp-action="Upgrade" asp-route-planId="@plan.Id"
+                               class="w-100 btn btn-lg btn-outline-primary shadow-sm fw-bold">Select Plan</a>
+                        }
                     </div>
                 </div>
             </div>

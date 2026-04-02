@@ -30,11 +30,20 @@ using (var scope = app.Services.CreateScope())
 
     var seededAdminPasswords = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        ["aylin.demir@qutech.com"] = "Admin@123",
-        ["mert.kara@qutech.com"] = "Support@123",
-        ["selin.yilmaz@qutech.com"] = "Security@123",
-        ["can.aydin@qutech.com"] = "Billing@123",
-        ["ece.sahin@qutech.com"] = "Product@123"
+        ["olivia.bennett@qutech.com"] = "Admin@123",
+        ["liam.carter@qutech.com"] = "Support@123",
+        ["charlotte.nguyen@qutech.com"] = "Security@123",
+        ["noah.reed@qutech.com"] = "Billing@123",
+        ["amelia.foster@qutech.com"] = "Product@123"
+    };
+
+    var seededCustomerPasswords = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["ethan.walker@harborfoods.com.au"] = "Customer@123",
+        ["sophie.mitchell@southernsteel.com.au"] = "Customer@234",
+        ["jack.thompson@meditrackhealth.com.au"] = "Customer@345",
+        ["grace.evans@pacificfreight.com.au"] = "Customer@456",
+        ["mason.parker@australadvisory.com.au"] = "Customer@567"
     };
 
     var adminsToFix = dbContext.Admins
@@ -50,6 +59,23 @@ using (var scope = app.Services.CreateScope())
     }
 
     if (adminsToFix.Count > 0)
+    {
+        dbContext.SaveChanges();
+    }
+
+    var customersToFix = dbContext.Customers
+        .Where(c => string.IsNullOrWhiteSpace(c.Password))
+        .ToList();
+
+    foreach (var customer in customersToFix)
+    {
+        if (seededCustomerPasswords.TryGetValue(customer.Email, out var password))
+        {
+            customer.Password = password;
+        }
+    }
+
+    if (customersToFix.Count > 0)
     {
         dbContext.SaveChanges();
     }
