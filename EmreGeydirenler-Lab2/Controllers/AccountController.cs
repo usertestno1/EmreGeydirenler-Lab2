@@ -20,6 +20,12 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        /// <summary>
+        /// Displays the administrator login page.
+        /// </summary>
+        /// <returns>
+        /// The login view for anonymous users, or a redirect to the admin dashboard when already authenticated.
+        /// </returns>
         public IActionResult Login()
         {
             if (User.Identity?.IsAuthenticated == true)
@@ -33,6 +39,13 @@ namespace EmreGeydirenler_Lab2.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        /// <summary>
+        /// Authenticates an administrator using submitted credentials and issues an authentication cookie.
+        /// </summary>
+        /// <param name="model">The login form data containing email and password.</param>
+        /// <returns>
+        /// Redirects to the admin dashboard when authentication succeeds; otherwise returns the login view with errors.
+        /// </returns>
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             var allowedKeys = new[] { nameof(LoginViewModel.Email), nameof(LoginViewModel.Password) };
@@ -89,6 +102,10 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        /// <summary>
+        /// Signs out the current user and clears the authentication cookie.
+        /// </summary>
+        /// <returns>A redirect to the login page.</returns>
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

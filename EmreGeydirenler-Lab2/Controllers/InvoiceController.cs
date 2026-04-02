@@ -18,7 +18,12 @@ namespace EmreGeydirenler_Lab2.Controllers
             _context = context;
         }
 
-        // Lists all past and current invoices for the customer
+        /// <summary>
+        /// Retrieves and displays invoice records with related customer and subscription details.
+        /// </summary>
+        /// <returns>
+        /// A view containing invoice data ordered by issue date in descending order.
+        /// </returns>
         public async Task<IActionResult> Index()
         {
             var invoices = await _context.Invoices
@@ -32,7 +37,11 @@ namespace EmreGeydirenler_Lab2.Controllers
             return View(invoices);
         }
 
-        // Shows a detailed breakdown of a specific invoice
+        /// <summary>
+        /// Displays a detail page for a specific invoice.
+        /// </summary>
+        /// <param name="id">The unique identifier of the invoice.</param>
+        /// <returns>A view with invoice detail information.</returns>
         public IActionResult Details(int id)
         {
             ViewBag.InvoiceId = id;

@@ -21,7 +21,12 @@ namespace EmreGeydirenler_Lab2.Controllers
             _context = context;
         }
 
-        // Shows high-level platform statistics (MRR, Total Users)
+        /// <summary>
+        /// Displays high-level administrative metrics for the dashboard.
+        /// </summary>
+        /// <returns>
+        /// A view containing total customer count, active subscription count, and monthly revenue.
+        /// </returns>
         public async Task<IActionResult> Dashboard()
         {
             var totalCustomers = await _context.Customers.CountAsync();
@@ -45,7 +50,12 @@ namespace EmreGeydirenler_Lab2.Controllers
             return View();
         }
 
-        // Displays system audit logs for accountability and security monitoring
+        /// <summary>
+        /// Retrieves and displays audit trail records for accountability and monitoring.
+        /// </summary>
+        /// <returns>
+        /// A view populated with audit logs ordered by newest timestamp first.
+        /// </returns>
         public async Task<IActionResult> AuditLogs()
         {
             var logs = await _context.AuditTrails
@@ -57,7 +67,12 @@ namespace EmreGeydirenler_Lab2.Controllers
             return View(logs);
         }
 
-        // Allows admin to configure subscription plans and modules
+        /// <summary>
+        /// Lists subscription plans for administrative management.
+        /// </summary>
+        /// <returns>
+        /// A view containing all subscription plans ordered by monthly price.
+        /// </returns>
         public async Task<IActionResult> ManagePlans()
         {
             var plans = await _context.SubscriptionPlans
@@ -69,6 +84,10 @@ namespace EmreGeydirenler_Lab2.Controllers
         }
 
         [HttpGet]
+        /// <summary>
+        /// Displays the form for creating a new subscription plan.
+        /// </summary>
+        /// <returns>A view for entering subscription plan details.</returns>
         public IActionResult Create()
         {
             return View();
@@ -76,6 +95,13 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        /// <summary>
+        /// Creates a new subscription plan when the submitted model is valid.
+        /// </summary>
+        /// <param name="plan">The subscription plan data submitted from the form.</param>
+        /// <returns>
+        /// Redirects to the plan list on success, or returns the same view with validation errors.
+        /// </returns>
         public async Task<IActionResult> Create(SubscriptionPlan plan)
         {
             if (!ModelState.IsValid)
@@ -98,6 +124,13 @@ namespace EmreGeydirenler_Lab2.Controllers
         }
 
         [HttpGet]
+        /// <summary>
+        /// Displays the edit form for an existing subscription plan.
+        /// </summary>
+        /// <param name="id">The unique identifier of the subscription plan.</param>
+        /// <returns>
+        /// A view with plan data when found; otherwise <c>NotFound</c>.
+        /// </returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id is null)
@@ -116,6 +149,14 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        /// <summary>
+        /// Updates an existing subscription plan when the submitted model is valid.
+        /// </summary>
+        /// <param name="id">The route identifier of the subscription plan.</param>
+        /// <param name="plan">The updated subscription plan data from the form.</param>
+        /// <returns>
+        /// Redirects to the plan list on success, or returns the edit view when validation or update fails.
+        /// </returns>
         public async Task<IActionResult> Edit(int id, SubscriptionPlan plan)
         {
             if (id != plan.Id)
@@ -153,6 +194,13 @@ namespace EmreGeydirenler_Lab2.Controllers
         }
 
         [HttpGet]
+        /// <summary>
+        /// Displays a delete confirmation page for a subscription plan.
+        /// </summary>
+        /// <param name="id">The unique identifier of the subscription plan.</param>
+        /// <returns>
+        /// A confirmation view when found; otherwise <c>NotFound</c>.
+        /// </returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id is null)
@@ -174,6 +222,13 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        /// <summary>
+        /// Deletes a subscription plan after confirmation.
+        /// </summary>
+        /// <param name="id">The unique identifier of the subscription plan to delete.</param>
+        /// <returns>
+        /// Redirects to the plan list on success, or returns the delete view if the operation fails.
+        /// </returns>
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var plan = await _context.SubscriptionPlans.FindAsync(id);

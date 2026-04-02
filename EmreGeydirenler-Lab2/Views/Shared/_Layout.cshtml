@@ -1,6 +1,5 @@
 ﻿@{
-    // URL'deki 'role' parametresini kontrol ediyoruz. Boşsa varsayılan 'customer'
-    var currentRole = Context.Request.Query["role"].ToString() == "admin" ? "admin" : "customer";
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
 }
 
 <!DOCTYPE html>
@@ -14,63 +13,35 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(currentRole == "admin" ? "bg-dark" : "bg-primary") border-bottom box-shadow mb-3 shadow">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom box-shadow mb-3 shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index" asp-route-role="@currentRole">
-                    QuTech <span class="badge @(currentRole == "admin" ? "bg-warning text-dark" : "bg-info")">@currentRole.ToUpper()</span>
-                </a>
-                
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        
-                        @if (currentRole == "customer")
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">QuTech</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-2">
+                        @if (isAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Home" asp-action="Index" asp-route-role="customer">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Subscription" asp-action="Plans" asp-route-role="customer">Plans</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="clientDrop" role="button" data-bs-toggle="dropdown">Client Portal</a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" asp-controller="Subscription" asp-action="MySubscription" asp-route-role="customer">My Subscription</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Invoice" asp-action="Index" asp-route-role="customer">My Invoices</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" asp-controller="CustomerSettings" asp-action="Profile" asp-route-role="customer">Edit Profile</a></li>
-                                    <li><a class="dropdown-item" asp-controller="CustomerSettings" asp-action="Security" asp-route-role="customer">Security Settings</a></li>
-                                </ul>
-                            </li>
+                            <a class="btn btn-outline-light btn-sm" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                            </form>
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-warning fw-bold" asp-controller="Admin" asp-action="Dashboard" asp-route-role="admin">Admin Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Admin" asp-action="AuditLogs" asp-route-role="admin">Audit Logs</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Admin" asp-action="ManagePlans" asp-route-role="admin">Manage Plans</a>
-                            </li>
+                            <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Login">Login</a>
                         }
-                    </ul>
-
-                    <ul class="navbar-nav border-start ps-3">
-                        <li class="nav-item">
-                            @if (currentRole == "customer")
-                            {
-                                <a class="btn btn-warning btn-sm fw-bold" href="?role=admin">🔄 Switch to Admin View</a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-info btn-sm fw-bold" href="?role=customer">🔄 Switch to Customer View</a>
-                            }
-                        </li>
-                        <li class="nav-item ms-2">
-                            <a class="btn btn-outline-light btn-sm" asp-controller="Home" asp-action="Index">Logout</a>
-                        </li>
-                    </ul>
+                    </div>
                 </div>
             </div>
         </nav>
