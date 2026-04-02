@@ -1,0 +1,28 @@
+@model EmreGeydirenler_Lab2.Models.SubscriptionPlan
+
+@{
+    ViewData["Title"] = "Delete Plan";
+}
+
+<h2>Delete Subscription Plan</h2>
+
+<div class="alert alert-warning mt-3">
+    Are you sure you want to delete this plan?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Plan Name</dt>
+    <dd class="col-sm-9">@Model.PlanName</dd>
+
+    <dt class="col-sm-3">Monthly Price</dt>
+    <dd class="col-sm-9">$@Model.MonthlyPrice.ToString("0.00")</dd>
+
+    <dt class="col-sm-3">Max Users</dt>
+    <dd class="col-sm-9">@Model.MaxUsers</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input asp-for="Id" type="hidden" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="ManagePlans" class="btn btn-secondary">Cancel</a>
+</form>

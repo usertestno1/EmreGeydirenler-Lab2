@@ -18,6 +18,7 @@ namespace EmreGeydirenler_Lab2.Models
         public DbSet<Invoice> Invoices => Set<Invoice>();
         public DbSet<AuditTrail> AuditTrails => Set<AuditTrail>();
         public DbSet<UsageRecord> UsageRecords => Set<UsageRecord>();
+        public DbSet<AccountSetting> AccountSettings => Set<AccountSetting>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -192,6 +193,7 @@ namespace EmreGeydirenler_Lab2.Models
                     TaxNumber = "TR7890123456"
                 }
             );
+
         }
     }
 }

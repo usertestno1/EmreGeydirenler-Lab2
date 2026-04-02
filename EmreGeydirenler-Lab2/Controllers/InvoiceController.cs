@@ -42,12 +42,27 @@ namespace EmreGeydirenler_Lab2.Controllers
         /// </summary>
         /// <param name="id">The unique identifier of the invoice.</param>
         /// <returns>A view with invoice detail information.</returns>
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            ViewBag.InvoiceId = id;
-            ViewBag.CompanyName = "Dummy Corp";
-            ViewBag.Amount = 49.99m;
-            return View();
+            var invoice = await _context.Invoices
+                .Include(i => i.Customer)
+                .ThenInclude(c => c.Subscriptions)
+                .ThenInclude(s => s.SubscriptionPlan)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (invoice is null)
+            {
+                return NotFound();
+            }
+
+            var subscription = invoice.Customer.Subscriptions?
+                .Where(s => s.Status == "Active")
+                .OrderByDescending(s => s.StartDate)
+                .FirstOrDefault();
+
+            ViewBag.SubscriptionPlanName = subscription?.SubscriptionPlan.PlanName ?? "N/A";
+            return View(invoice);
         }
     }
 }

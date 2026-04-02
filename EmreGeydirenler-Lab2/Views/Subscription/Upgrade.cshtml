@@ -1,18 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Confirm Your Plan Upgrade";
-    
-    // Mevcut plan ve fiyat bilgileri (Pro)
-    decimal currentPrice = 49.99m;
-    
-    // Seçilen planın bilgilerini ID'ye göre belirliyoruz
-    string newPlanName = "";
-    decimal newPlanPrice = 0m;
-    int selectedId = ViewBag.SelectedPlanId;
-
-    if (selectedId == 1) { newPlanName = "Basic"; newPlanPrice = 19.99m; }
-    else if (selectedId == 3) { newPlanName = "Enterprise"; newPlanPrice = 99.99m; }
-    else { newPlanName = "Pro"; newPlanPrice = 49.99m; }
-
+    decimal currentPrice = ViewBag.CurrentPlanPrice ?? 0m;
+    string currentPlanName = ViewBag.CurrentPlanName ?? "Current";
+    string newPlanName = ViewBag.NewPlanName ?? "Selected";
+    decimal newPlanPrice = ViewBag.NewPlanPrice ?? 0m;
     decimal difference = newPlanPrice - currentPrice;
 }
 
@@ -25,7 +16,7 @@
                 </div>
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <p class="lead">You are switching from <strong>Pro Plan</strong> to <strong>@newPlanName Plan</strong>.</p>
+                        <p class="lead">You are switching from <strong>@currentPlanName Plan</strong> to <strong>@newPlanName Plan</strong>.</p>
                     </div>
 
                     <table class="table table-bordered mb-4">
@@ -51,13 +42,13 @@
 
                     <div class="alert @(difference <= 0 ? "alert-info" : "alert-warning") shadow-sm" role="alert">
                         <h5 class="alert-heading fw-bold">Important Note:</h5>
-                        @if (selectedId == 1) // Basic seçildiyse
+                        @if (difference <= 0)
                         {
-                            <p class="mb-0">No extra payment is required today. The <strong>Basic</strong> pricing will be applied starting from your next billing cycle.</p>
+                            <p class="mb-0">No extra payment is required today. The new pricing will apply from your next billing cycle.</p>
                         }
-                        else if (selectedId == 3) // Enterprise seçildiyse
+                        else
                         {
-                            <p class="mb-0">An extra payment of <strong>$@difference.ToString("F2")</strong> is required today to cover the upgrade for the current month. Future renewals will be billed at <strong>$99.99/mo</strong> starting on your next subscription date.</p>
+                            <p class="mb-0">An extra payment of <strong>$@difference.ToString("F2")</strong> is required today to cover this billing period. Future renewals will use the new monthly rate.</p>
                         }
                     </div>
 

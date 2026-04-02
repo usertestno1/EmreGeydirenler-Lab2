@@ -1,32 +1,43 @@
-﻿@{
+﻿@model EmreGeydirenler_Lab2.Models.Customer
+@{
     ViewData["Title"] = "Edit Company Profile";
 }
 
 <div class="container mt-4">
     <h2 class="text-primary fw-bold">@ViewData["Title"]</h2>
     <p class="text-muted">Update your business information for QuTech billing.</p>
+    @if (TempData["ProfileMessage"] is string profileMessage)
+    {
+        <div class="alert alert-success">@profileMessage</div>
+    }
     <hr />
 
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm border-0 bg-light">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Company Name</label>
-                        <input type="text" class="form-control form-control-lg" placeholder="Enter company name..." value="@ViewBag.CompanyName" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tax Number</label>
-                        <input type="text" class="form-control form-control-lg" placeholder="Enter tax number..." value="@ViewBag.TaxNumber" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Business Address</label>
-                        <textarea class="form-control" rows="3">123 QuTech Ave, Melbourne, VIC</textarea>
-                    </div>
+                    <form asp-action="Profile" method="post">
+                        <input asp-for="Id" type="hidden" />
+                        <div class="mb-3">
+                            <label asp-for="CompanyName" class="form-label fw-bold"></label>
+                            <input asp-for="CompanyName" class="form-control form-control-lg" />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TaxNumber" class="form-label fw-bold"></label>
+                            <input asp-for="TaxNumber" class="form-control form-control-lg" />
+                            <span asp-validation-for="TaxNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label fw-bold"></label>
+                            <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
 
-                    <button type="button" class="btn btn-success btn-lg w-100 shadow-sm mt-3" onclick="alert('Profile Updated Successfully! (Simulated)'); window.location.href='/Home/Index';">
-                        Update Profile Information
-                    </button>
+                        <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm mt-3">
+                            Update Profile Information
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

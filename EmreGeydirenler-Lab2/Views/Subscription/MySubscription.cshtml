@@ -25,20 +25,20 @@
                         <span class="text-muted">@ViewBag.StorageUsed</span>
                     </div>
                     <div class="progress mt-2" style="height: 15px;">
-                        <div class="progress-bar bg-success shadow-sm" style="width: 31%"></div>
+                        <div class="progress-bar bg-success shadow-sm" style="width: @ViewBag.StoragePercent%"></div>
                     </div>
-                    <small class="text-muted">You have used 31% of your 50 GB limit.</small>
+                    <small class="text-muted">You have used @ViewBag.StoragePercent% of your storage limit.</small>
                 </div>
 
                 <div class="mt-4">
                     <div class="d-flex justify-content-between">
                         <label class="fw-bold">API Requests (Monthly)</label>
-                        <span class="text-muted">3,420 / 10,000</span>
+                        <span class="text-muted">@ViewBag.ApiUsed / @ViewBag.ApiLimit</span>
                     </div>
                     <div class="progress mt-2" style="height: 15px;">
-                        <div class="progress-bar bg-info shadow-sm" style="width: 34%"></div>
+                        <div class="progress-bar bg-info shadow-sm" style="width: @ViewBag.ApiPercent%"></div>
                     </div>
-                    <small class="text-muted">34% of your monthly request quota.</small>
+                    <small class="text-muted">@ViewBag.ApiPercent% of your monthly request quota.</small>
                 </div>
             </div>
         </div>

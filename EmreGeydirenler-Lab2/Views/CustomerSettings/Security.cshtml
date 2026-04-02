@@ -1,4 +1,5 @@
-﻿@{
+﻿@model EmreGeydirenler_Lab2.Models.AccountSetting
+@{
     ViewData["Title"] = "Account Security Settings";
 }
 
@@ -11,32 +12,39 @@
                 </div>
                 <div class="card-body p-4">
                     <p class="text-muted mb-4">Manage your account security preferences and automated email alerts below.</p>
+                    @if (TempData["SecurityMessage"] is string securityMessage)
+                    {
+                        <div class="alert alert-success">@securityMessage</div>
+                    }
 
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                        <div>
-                            <h6 class="fw-bold mb-0">Two-Factor Authentication (2FA)</h6>
-                            <small class="text-muted">Adds an extra layer of security to your login process.</small>
+                    <form asp-action="Security" method="post">
+                        <input asp-for="CustomerId" type="hidden" />
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                            <div>
+                                <h6 class="fw-bold mb-0">Two-Factor Authentication (2FA)</h6>
+                                <small class="text-muted">Adds an extra layer of security to your login process.</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input asp-for="TwoFactorEnabled" class="form-check-input" type="checkbox" role="switch" id="2faToggle">
+                            </div>
                         </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="2faToggle" checked="@ViewBag.Is2FAEnabled">
-                        </div>
-                    </div>
 
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-                        <div>
-                            <h6 class="fw-bold mb-0">Email Notifications</h6>
-                            <small class="text-muted">Receive alerts about system updates, billing, and failed logins.</small>
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                            <div>
+                                <h6 class="fw-bold mb-0">Email Notifications</h6>
+                                <small class="text-muted">Receive alerts about system updates, billing, and failed logins.</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input asp-for="ReceiveEmailAlerts" class="form-check-input" type="checkbox" role="switch" id="emailToggle">
+                            </div>
                         </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="emailToggle" checked="@ViewBag.ReceiveAlerts">
-                        </div>
-                    </div>
 
-                    <div class="text-end">
-                        <button type="button" class="btn btn-primary px-4 shadow-sm" onclick="alert('Security settings have been updated! (Simulated)');">
-                            Save Security Changes
-                        </button>
-                    </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                                Save Security Changes
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
