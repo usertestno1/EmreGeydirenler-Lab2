@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Welcome to QuTech";
+}
+
+<div class="container mt-5">
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-7">
+            <h1 class="display-3 fw-bold text-dark">Next-Gen SAAS for <span class="text-primary">Global Enterprises.</span></h1>
+            <p class="lead mt-4 text-muted">
+                QuTech provides the most flexible, modular, and secure cloud management platform.
+                From real-time analytics to automated billing, we empower businesses to scale
+                without the technical debt.
+            </p>
+            <div class="mt-5">
+                <a asp-controller="Subscription" asp-action="Plans" class="btn btn-primary btn-lg px-4 me-3 shadow">Explore Our Plans</a>
+                <a href="#about" class="btn btn-outline-secondary btn-lg px-4">Learn More</a>
+            </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block">
+            <img src="https://via.placeholder.com/500x400/343a40/ffffff?text=QuTech+Platform+Preview" alt="SAAS Dashboard" class="img-fluid rounded shadow-lg">
+        </div>
+    </div>
+
+    <div id="about" class="py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Who is QuTech?</h2>
+            <p class="text-muted w-75 mx-auto">Founded in 2024, QuTech has rapidly evolved from a startup lab to a powerful SAAS provider, dedicated to making enterprise resource management accessible to everyone.</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 bg-light p-3">
+                    <div class="card-body">
+                        <h4 class="fw-bold">Modular Design</h4>
+                        <p class="text-muted small">Only pay for what you use. Our modular structure allows you to enable specific features like HR, CRM, or Finance on the fly.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 bg-light p-3">
+                    <div class="card-body">
+                        <h4 class="fw-bold">Absolute Security</h4>
+                        <p class="text-muted small">Every critical action in our system is recorded via advanced Audit Trails, ensuring 100% accountability for your business data.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 bg-light p-3">
+                    <div class="card-body">
+                        <h4 class="fw-bold">Cloud Analytics</h4>
+                        <p class="text-muted small">Turn your usage data into insights. Track API requests and resource consumption with our built-in analytics engine.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="text-warning fw-bold">QuTech Admin Control Panel</h2>
+<p class="text-muted">Global platform overview and real-time analytics.</p>
+<hr />
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-info text-white shadow-sm mb-4 border-0">
+            <div class="card-body text-center py-4">
+                <h5 class="text-uppercase small fw-bold">Total Active Customers</h5>
+                <h2 class="display-5 fw-bold">@ViewBag.TotalCustomers</h2>
+                <div class="small opacity-75">↑ 12% from last month</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow-sm mb-4 border-0">
+            <div class="card-body text-center py-4">
+                <h5 class="text-uppercase small fw-bold">Monthly Recurring Revenue</h5>
+                <h2 class="display-5 fw-bold">@ViewBag.MonthlyRevenue</h2>
+                <div class="small opacity-75">Target: $50,000</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-secondary text-white shadow-sm mb-4 border-0">
+            <div class="card-body text-center py-4">
+                <h5 class="text-uppercase small fw-bold">Active Subscriptions</h5>
+                <h2 class="display-5 fw-bold">@ViewBag.ActiveSubscriptions</h2>
+                <div class="small opacity-75">98% Retention Rate</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-12">
+        <div class="p-4 bg-light border rounded shadow-sm d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-1 fw-bold">System Security & Management</h5>
+                <p class="mb-0 text-muted small">Monitor internal logs and manage global subscription modules.</p>
+            </div>
+            <div class="text-end">
+                <a asp-action="AuditLogs" asp-route-role="admin" class="btn btn-dark shadow-sm px-4 me-2">
+                    View System Audit Logs
+                </a>
+                <a asp-action="ManagePlans" asp-route-role="admin" class="btn btn-outline-dark shadow-sm">
+                    Manage Plans
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

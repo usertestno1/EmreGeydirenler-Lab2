@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Usage Statistics";
+    // Controller'dan gelen verileri kullanıyoruz
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Subscription Overview</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="text-primary mb-0">Active Plan: <strong>@ViewBag.CurrentPlan</strong></h4>
+                        <p class="text-muted">Your next billing date is in @ViewBag.DaysRemaining days.</p>
+                    </div>
+                    <a asp-action="Plans" asp-route-role="customer" class="btn btn-outline-primary btn-sm">Upgrade Plan</a>
+                </div>
+                
+                <hr />
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <label class="fw-bold">Cloud Storage Usage</label>
+                        <span class="text-muted">@ViewBag.StorageUsed</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 15px;">
+                        <div class="progress-bar bg-success shadow-sm" style="width: 31%"></div>
+                    </div>
+                    <small class="text-muted">You have used 31% of your 50 GB limit.</small>
+                </div>
+
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between">
+                        <label class="fw-bold">API Requests (Monthly)</label>
+                        <span class="text-muted">3,420 / 10,000</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 15px;">
+                        <div class="progress-bar bg-info shadow-sm" style="width: 34%"></div>
+                    </div>
+                    <small class="text-muted">34% of your monthly request quota.</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-light border-0 p-3 shadow-sm">
+                <h5 class="fw-bold">Need more space?</h5>
+                <p class="small text-muted">Enterprise plans offer up to 500 GB storage and unlimited API requests for growing teams.</p>
+                <a asp-action="Plans" asp-route-role="customer" class="btn btn-dark btn-sm w-100">View Enterprise</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Confirm Your Plan Upgrade";
+    
+    // Mevcut plan ve fiyat bilgileri (Pro)
+    decimal currentPrice = 49.99m;
+    
+    // Seçilen planın bilgilerini ID'ye göre belirliyoruz
+    string newPlanName = "";
+    decimal newPlanPrice = 0m;
+    int selectedId = ViewBag.SelectedPlanId;
+
+    if (selectedId == 1) { newPlanName = "Basic"; newPlanPrice = 19.99m; }
+    else if (selectedId == 3) { newPlanName = "Enterprise"; newPlanPrice = 99.99m; }
+    else { newPlanName = "Pro"; newPlanPrice = 49.99m; }
+
+    decimal difference = newPlanPrice - currentPrice;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 text-center">Confirm Your Plan Selection</h4>
+                </div>
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <p class="lead">You are switching from <strong>Pro Plan</strong> to <strong>@newPlanName Plan</strong>.</p>
+                    </div>
+
+                    <table class="table table-bordered mb-4">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Item Description</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>New Plan Monthly Rate (@newPlanName)</td>
+                                <td class="text-end">$@newPlanPrice.ToString("F2")</td>
+                            </tr>
+                            <tr class="fw-bold">
+                                <td>Due Today</td>
+                                <td class="text-end text-success">
+                                    @(difference > 0 ? $"${difference.ToString("F2")}" : "$0.00")
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert @(difference <= 0 ? "alert-info" : "alert-warning") shadow-sm" role="alert">
+                        <h5 class="alert-heading fw-bold">Important Note:</h5>
+                        @if (selectedId == 1) // Basic seçildiyse
+                        {
+                            <p class="mb-0">No extra payment is required today. The <strong>Basic</strong> pricing will be applied starting from your next billing cycle.</p>
+                        }
+                        else if (selectedId == 3) // Enterprise seçildiyse
+                        {
+                            <p class="mb-0">An extra payment of <strong>$@difference.ToString("F2")</strong> is required today to cover the upgrade for the current month. Future renewals will be billed at <strong>$99.99/mo</strong> starting on your next subscription date.</p>
+                        }
+                    </div>
+
+                    <div class="mt-5 d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-success btn-lg px-5 shadow"
+                                onclick="alert('Transaction Completed! Your @newPlanName subscription is now processing.'); window.location.href='/Subscription/MySubscription?role=customer';">
+                            Confirm & Pay
+                        </button>
+                        <a asp-action="Plans" asp-route-role="customer" class="btn btn-outline-secondary btn-lg px-5">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EmreGeydirenler_Lab2.Models.Invoice>
+@{
+    ViewData["Title"] = "My Invoices";
+}
+
+<h2>Billing & Invoicing History</h2>
+<p class="text-muted">Review your past payments and pending invoices here.</p>
+
+<table class="table table-striped table-hover mt-4 shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Invoice ID</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var invoice in Model)
+        {
+            <tr>
+                <td>#@invoice.Id</td>
+                <td>@invoice.IssueDate.ToShortDateString()</td>
+                <td>@invoice.DueDate.ToShortDateString()</td>
+                <td class="fw-bold">$@invoice.TotalAmount</td>
+                <td>
+                    @if (invoice.IsPaid)
+                    {
+                        <span class="badge bg-success">Paid</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Pending</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@invoice.Id" class="btn btn-sm btn-outline-info">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<EmreGeydirenler_Lab2.Models.SubscriptionPlan>
+@{
+    ViewData["Title"] = "Subscription Plans";
+    var currentRole = Context.Request.Query["role"].ToString() == "admin" ? "admin" : "customer";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold">Flexible Subscription Plans</h2>
+    <p class="text-center text-muted mb-5">Choose the best modular plan for your business needs.</p>
+
+    <div class="row justify-content-center">
+        @foreach (var plan in Model)
+        {
+            // Set limits based on plan name to match the design
+            var storageLimit = plan.PlanName == "Basic" ? "5 GB" : (plan.PlanName == "Pro" ? "50 GB" : "500 GB");
+            var apiLimit = plan.PlanName == "Basic" ? "1,000" : (plan.PlanName == "Pro" ? "10,000" : "Unlimited");
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center shadow @(plan.PlanName == "Pro" ? "border-primary border-3" : "border-0")">
+                    
+                    @if (plan.PlanName == "Pro")
+                    {
+                        <div class="bg-primary text-white small fw-bold py-1">YOUR CURRENT PLAN</div>
+                    }
+
+                    <div class="card-header @(plan.PlanName == "Pro" ? "bg-primary text-white" : "bg-dark text-white") py-3">
+                        <h4 class="my-0 fw-bold">@plan.PlanName</h4>
+                    </div>
+
+                    <div class="card-body py-4">
+                        <h1 class="card-title fw-bold">
+                            $@plan.MonthlyPrice<small class="text-muted fw-light">/mo</small>
+                        </h1>
+                        <ul class="list-unstyled mt-4 mb-4 text-start px-4">
+                            <li class="mb-2"><span class="text-primary me-2">✔</span><strong>@plan.MaxUsers</strong> Users</li>
+                            <li class="mb-2"><span class="text-primary me-2">✔</span><strong>@storageLimit</strong> Secure Storage</li>
+                            <li class="mb-2"><span class="text-primary me-2">✔</span><strong>@apiLimit</strong> Monthly API Calls</li>
+                            <li class="mb-2"><span class="text-primary me-2">✔</span> 24/7 Priority Support</li>
+                        </ul>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 pb-4 px-4">
+                        @if (plan.PlanName == "Pro")
+                        {
+                            <button class="w-100 btn btn-lg btn-secondary disabled shadow-sm">Already Active</button>
+                        }
+                        else
+                        {
+                            <a asp-action="Upgrade" asp-route-planId="@plan.Id" asp-route-role="@currentRole"
+                               class="w-100 btn btn-lg btn-outline-primary shadow-sm fw-bold">Select Plan</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow w-75 mx-auto">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Invoice #@ViewBag.InvoiceId</h4>
+            <span class="badge bg-success">Paid</span>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Billed To: @ViewBag.CompanyName</h5>
+            <p class="card-text text-muted">Thank you for your business with QuTech SAAS.</p>
+            <hr />
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <span class="fw-bold fs-5">Total Amount Due:</span>
+                <span class="fs-3 text-success fw-bold">$@ViewBag.Amount</span>
+            </div>
+            <div class="mt-5 text-end">
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to Invoices</a>
+                <button class="btn btn-primary ms-2">Download PDF</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Edit Company Profile";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold">@ViewData["Title"]</h2>
+    <p class="text-muted">Update your business information for QuTech billing.</p>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Company Name</label>
+                        <input type="text" class="form-control form-control-lg" placeholder="Enter company name..." value="@ViewBag.CompanyName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tax Number</label>
+                        <input type="text" class="form-control form-control-lg" placeholder="Enter tax number..." value="@ViewBag.TaxNumber" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Business Address</label>
+                        <textarea class="form-control" rows="3">123 QuTech Ave, Melbourne, VIC</textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-success btn-lg w-100 shadow-sm mt-3" onclick="alert('Profile Updated Successfully! (Simulated)'); window.location.href='/Home/Index';">
+                        Update Profile Information
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-none d-md-block text-center mt-5">
+            <div class="p-5 border rounded-circle d-inline-block bg-white shadow-sm">
+                <i class="display-1 text-primary">🏢</i>
+            </div>
+            <p class="mt-3 text-muted">Your business identity is secure with us.</p>
+        </div>
+    </div>
+</div>

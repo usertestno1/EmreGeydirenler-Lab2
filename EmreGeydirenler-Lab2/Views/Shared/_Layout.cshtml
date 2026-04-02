@@ -1,0 +1,95 @@
+﻿@{
+    // URL'deki 'role' parametresini kontrol ediyoruz. Boşsa varsayılan 'customer'
+    var currentRole = Context.Request.Query["role"].ToString() == "admin" ? "admin" : "customer";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - QuTech SAAS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(currentRole == "admin" ? "bg-dark" : "bg-primary") border-bottom box-shadow mb-3 shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index" asp-route-role="@currentRole">
+                    QuTech <span class="badge @(currentRole == "admin" ? "bg-warning text-dark" : "bg-info")">@currentRole.ToUpper()</span>
+                </a>
+                
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        
+                        @if (currentRole == "customer")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Home" asp-action="Index" asp-route-role="customer">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Subscription" asp-action="Plans" asp-route-role="customer">Plans</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="clientDrop" role="button" data-bs-toggle="dropdown">Client Portal</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" asp-controller="Subscription" asp-action="MySubscription" asp-route-role="customer">My Subscription</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Invoice" asp-action="Index" asp-route-role="customer">My Invoices</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="CustomerSettings" asp-action="Profile" asp-route-role="customer">Edit Profile</a></li>
+                                    <li><a class="dropdown-item" asp-controller="CustomerSettings" asp-action="Security" asp-route-role="customer">Security Settings</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-bold" asp-controller="Admin" asp-action="Dashboard" asp-route-role="admin">Admin Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Admin" asp-action="AuditLogs" asp-route-role="admin">Audit Logs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Admin" asp-action="ManagePlans" asp-route-role="admin">Manage Plans</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav border-start ps-3">
+                        <li class="nav-item">
+                            @if (currentRole == "customer")
+                            {
+                                <a class="btn btn-warning btn-sm fw-bold" href="?role=admin">🔄 Switch to Admin View</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-info btn-sm fw-bold" href="?role=customer">🔄 Switch to Customer View</a>
+                            }
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-outline-light btn-sm" asp-controller="Home" asp-action="Index">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-5 py-3">
+        <div class="container text-center">
+            &copy; 2026 - QuTech SAAS - <strong>Emre Geydirenler (s8162760)</strong> - <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

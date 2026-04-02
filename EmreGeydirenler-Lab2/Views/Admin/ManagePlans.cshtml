@@ -1,0 +1,42 @@
+﻿@model IEnumerable<EmreGeydirenler_Lab2.Models.SubscriptionPlan>
+
+@{
+    ViewData["Title"] = "Manage Plans";
+}
+
+<h1>Manage Subscription Plans</h1>
+
+<p>Here you can manage the subscription plans for the platform.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Plan Name</th>
+            <th>Monthly Price</th>
+            <th>Max Users</th>
+            <th>Storage</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var plan in Model)
+            {
+                var storageLimit = plan.PlanName == "Basic" ? "5 GB" : (plan.PlanName == "Pro" ? "50 GB" : "500 GB");
+                
+                <tr>
+                    <td>@plan.PlanName</td>
+                    <td>$@plan.MonthlyPrice.ToString("0.00")</td>
+                    <td>@plan.MaxUsers</td>
+                    <td>@storageLimit</td>
+                    <td>@(plan.IsActive ? "Active" : "Inactive")</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Edit</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
