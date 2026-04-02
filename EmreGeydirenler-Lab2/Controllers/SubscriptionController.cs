@@ -18,7 +18,7 @@ namespace EmreGeydirenler_Lab2.Controllers
             _context = context;
         }
 
-        // Lists all available plans (Basic, Pro, Enterprise)
+        // Lists all available active plans.
         public async Task<IActionResult> Plans()
         {
             var plans = await _context.SubscriptionPlans

@@ -14,7 +14,7 @@
                         <h4 class="text-primary mb-0">Active Plan: <strong>@ViewBag.CurrentPlan</strong></h4>
                         <p class="text-muted">Your next billing date is in @ViewBag.DaysRemaining days.</p>
                     </div>
-                    <a asp-action="Plans" asp-route-role="customer" class="btn btn-outline-primary btn-sm">Upgrade Plan</a>
+                    <a asp-action="Plans" class="btn btn-outline-primary btn-sm">Upgrade Plan</a>
                 </div>
                 
                 <hr />
@@ -47,7 +47,7 @@
             <div class="card bg-light border-0 p-3 shadow-sm">
                 <h5 class="fw-bold">Need more space?</h5>
                 <p class="small text-muted">Enterprise plans offer up to 500 GB storage and unlimited API requests for growing teams.</p>
-                <a asp-action="Plans" asp-route-role="customer" class="btn btn-dark btn-sm w-100">View Enterprise</a>
+                <a asp-action="Plans" class="btn btn-dark btn-sm w-100">View Enterprise</a>
             </div>
         </div>
     </div>

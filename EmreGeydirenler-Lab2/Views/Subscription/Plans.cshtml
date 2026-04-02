@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<EmreGeydirenler_Lab2.Models.SubscriptionPlan>
 @{
     ViewData["Title"] = "Subscription Plans";
-    var currentRole = Context.Request.Query["role"].ToString() == "admin" ? "admin" : "customer";
 }
 
 <div class="container mt-4">
@@ -49,7 +48,7 @@
                     </div>
 
                     <div class="card-footer bg-transparent border-0 pb-4 px-4">
-                        <a asp-action="Upgrade" asp-route-planId="@plan.Id" asp-route-role="@currentRole"
+                        <a asp-action="Upgrade" asp-route-planId="@plan.Id"
                            class="w-100 btn btn-lg btn-outline-primary shadow-sm fw-bold">Select Plan</a>
                     </div>
                 </div>
