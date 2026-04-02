@@ -1,47 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EmreGeydirenler_Lab2.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmreGeydirenler_Lab2.Controllers
 {
     // Handles customer billing and invoice history.
     public class InvoiceController : Controller
     {
-        // Lists all past and current invoices for the customer
-        public IActionResult Index()
+        private readonly ApplicationDbContext _context;
+
+        public InvoiceController(ApplicationDbContext context)
         {
-            // Creating dummy invoice data to display in the view table
-            var invoices = new List<Invoice>
-            {
-                new Invoice
-                {
-                    Id = 1001,
-                    IssueDate = DateTime.Now.AddMonths(-2),
-                    DueDate = DateTime.Now.AddMonths(-2).AddDays(15),
-                    TotalAmount = 49.99m,
-                    IsPaid = true,
-                    Customer = null!,
-                },
-                new Invoice
-                {
-                    Id = 1002,
-                    IssueDate = DateTime.Now.AddMonths(-1),
-                    DueDate = DateTime.Now.AddMonths(-1).AddDays(15),
-                    TotalAmount = 49.99m,
-                    IsPaid = true,
-                    Customer = null!,
-                },
-                new Invoice
-                {
-                    Id = 1003,
-                    IssueDate = DateTime.Now,
-                    DueDate = DateTime.Now.AddDays(15),
-                    TotalAmount = 49.99m,
-                    IsPaid = false,
-                    Customer = null!,
-                }, // Pending invoice
-            };
+            _context = context;
+        }
+
+        // Lists all past and current invoices for the customer
+        public async Task<IActionResult> Index()
+        {
+            var invoices = await _context.Invoices
+                .Include(i => i.Customer)
+                .ThenInclude(c => c.Subscriptions)
+                .ThenInclude(s => s.SubscriptionPlan)
+                .AsNoTracking()
+                .OrderByDescending(i => i.IssueDate)
+                .ToListAsync();
+
             return View(invoices);
         }
 
