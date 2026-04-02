@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "My Subscription";
+    var isEnterprisePlan = string.Equals(ViewBag.CurrentPlan as string, "Enterprise", StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="container mt-4">
@@ -49,16 +50,27 @@
         </div>
         
         <div class="col-md-4">
-            <div class="card bg-light border-0 p-3 shadow-sm">
-                <h5 class="fw-bold">Need more space?</h5>
-                <p class="small text-muted">Enterprise plans offer up to 500 GB storage and unlimited API requests for growing teams.</p>
-                <a asp-action="Plans" class="btn btn-dark btn-sm w-100">View Enterprise</a>
-            </div>
+            @if (!isEnterprisePlan)
+            {
+                <div class="card bg-light border-0 p-3 shadow-sm">
+                    <h5 class="fw-bold">Need more space?</h5>
+                    <p class="small text-muted">Enterprise plans offer up to 500 GB storage and unlimited API requests for growing teams.</p>
+                    <a asp-action="Plans" class="btn btn-dark btn-sm w-100">View Enterprise</a>
+                </div>
+            }
 
             <div class="card border-0 p-3 shadow-sm mt-3">
-                <h5 class="fw-bold">Thinking about upgrading?</h5>
-                <p class="small text-muted">Review better plans and compare your current monthly cost with higher tiers.</p>
-                <a asp-action="Plans" class="btn btn-primary btn-sm w-100">Review Better Plans</a>
+                @if (isEnterprisePlan)
+                {
+                    <h5 class="fw-bold">You're on the highest plan</h5>
+                    <p class="small text-muted mb-0">You are already on Enterprise. Your current plan includes the highest storage and API request limits.</p>
+                }
+                else
+                {
+                    <h5 class="fw-bold">Thinking about upgrading?</h5>
+                    <p class="small text-muted">Review better plans and compare your current monthly cost with higher tiers.</p>
+                    <a asp-action="Plans" class="btn btn-primary btn-sm w-100">Review Better Plans</a>
+                }
             </div>
         </div>
     </div>

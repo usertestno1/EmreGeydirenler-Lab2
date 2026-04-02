@@ -13,7 +13,8 @@
         <tr>
             <th>Time</th>
             <th>Action Description</th>
-            <th>IP Address</th>
+            <th>User ID</th>
+            <th>User Role</th>
         </tr>
     </thead>
     <tbody>
@@ -22,7 +23,8 @@
             <tr>
                 <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
                 <td>@log.ActionDescription</td>
-                <td><code>@log.IPAddress</code></td>
+                <td><code>@log.UserId</code></td>
+                <td>@(log.User is EmreGeydirenler_Lab2.Models.Admin ? "Admin" : "Customer")</td>
             </tr>
         }
     </tbody>

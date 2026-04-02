@@ -101,12 +101,20 @@ namespace EmreGeydirenler_Lab2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Security(AccountSetting input)
+        public async Task<IActionResult> Security(AccountSetting input, string? newPassword)
         {
             var customerId = GetCurrentCustomerId();
             if (customerId is null)
             {
                 return Forbid();
+            }
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Id == customerId.Value);
+
+            if (customer is null)
+            {
+                return NotFound();
             }
 
             var setting = await _context.AccountSettings
@@ -129,6 +137,12 @@ namespace EmreGeydirenler_Lab2.Controllers
                 setting.ReceiveEmailAlerts = input.ReceiveEmailAlerts;
             }
 
+            var passwordChanged = !string.IsNullOrWhiteSpace(newPassword);
+            if (passwordChanged)
+            {
+                customer.Password = newPassword!.Trim();
+            }
+
             _context.AuditTrails.Add(new AuditTrail
             {
                 ActionDescription = "Customer updated security preferences (2FA and email alerts).",
@@ -138,8 +152,22 @@ namespace EmreGeydirenler_Lab2.Controllers
                 User = null!
             });
 
+            if (passwordChanged)
+            {
+                _context.AuditTrails.Add(new AuditTrail
+                {
+                    ActionDescription = "Customer changed account password from Security settings.",
+                    Timestamp = DateTime.UtcNow,
+                    IPAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
+                    UserId = customerId.Value,
+                    User = null!
+                });
+            }
+
             await _context.SaveChangesAsync();
-            TempData["SecurityMessage"] = "Security settings updated successfully.";
+            TempData["SecurityMessage"] = passwordChanged
+                ? "Security settings updated successfully. Your password was also updated."
+                : "Security settings updated successfully.";
             return RedirectToAction(nameof(Security));
         }
 

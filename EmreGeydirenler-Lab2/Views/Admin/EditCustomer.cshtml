@@ -1,0 +1,125 @@
+@model EmreGeydirenler_Lab2.Models.AdminCustomerEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Customer";
+    var currentActivePlan = ViewBag.CurrentActivePlan as string ?? "No Active Plan";
+    var invoices = ViewBag.Invoices as List<EmreGeydirenler_Lab2.Models.AdminCustomerInvoiceViewModel>
+        ?? new List<EmreGeydirenler_Lab2.Models.AdminCustomerInvoiceViewModel>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Customer Details</h2>
+        <p class="text-muted mb-0">@Model.FirstName @Model.LastName</p>
+    </div>
+    <a asp-action="ManageCustomers" class="btn btn-outline-secondary">Back to Customers</a>
+</div>
+
+@if (TempData["CustomerMessage"] is string customerMessage)
+{
+    <div class="alert alert-success">@customerMessage</div>
+}
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <p class="mb-2"><strong>Customer ID:</strong> @Model.Id</p>
+        <p class="mb-3"><strong>Current Active Plan:</strong> @currentActivePlan</p>
+
+        <form asp-action="EditCustomer" asp-route-id="@Model.Id" method="post">
+            <input asp-for="Id" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CompanyName" class="form-label"></label>
+                <input asp-for="CompanyName" class="form-control" />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TaxNumber" class="form-label"></label>
+                <input asp-for="TaxNumber" class="form-control" />
+                <span asp-validation-for="TaxNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<h4>Customer Invoices</h4>
+<table class="table table-bordered table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Invoice ID</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Change Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (invoices.Count == 0)
+        {
+            <tr>
+                <td colspan="6" class="text-center">No invoices found for this customer.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var invoice in invoices)
+            {
+                <tr>
+                    <td>#@invoice.Id</td>
+                    <td>@invoice.IssueDate.ToShortDateString()</td>
+                    <td>@invoice.DueDate.ToShortDateString()</td>
+                    <td>$@invoice.TotalAmount.ToString("0.00")</td>
+                    <td>
+                        <span class="badge @(invoice.IsPaid ? "bg-success" : "bg-danger")">
+                            @(invoice.IsPaid ? "Paid" : "Unpaid")
+                        </span>
+                    </td>
+                    <td>
+                        <form asp-action="UpdateInvoiceStatus" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@invoice.Id" />
+                            <input type="hidden" name="customerId" value="@Model.Id" />
+                            <input type="hidden" name="isPaid" value="@(invoice.IsPaid ? "false" : "true")" />
+                            <button type="submit" class="btn btn-sm @(invoice.IsPaid ? "btn-warning" : "btn-success")">
+                                Mark as @(invoice.IsPaid ? "Unpaid" : "Paid")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

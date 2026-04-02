@@ -43,7 +43,7 @@ namespace EmreGeydirenler_Lab2.Controllers
                 .SumAsync();
 
             ViewBag.TotalCustomers = totalCustomers;
-            ViewBag.MonthlyRevenue = $"AUD {totalMonthlyRevenue:0.00}";
+            ViewBag.MonthlyRevenue = $"${totalMonthlyRevenue:0.00}";
             ViewBag.ActiveSubscriptions = activeSubscriptions;
 
             return View();
@@ -80,6 +80,238 @@ namespace EmreGeydirenler_Lab2.Controllers
                 .ToListAsync();
 
             return View(plans);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageCustomers()
+        {
+            var now = DateTime.UtcNow;
+            var customers = await _context.Customers
+                .AsNoTracking()
+                .OrderBy(c => c.Id)
+                .Select(c => new AdminCustomerListItemViewModel
+                {
+                    CustomerId = c.Id,
+                    FullName = c.FirstName + " " + c.LastName,
+                    CompanyName = c.CompanyName,
+                    CurrentActivePlan = _context.Subscriptions
+                        .Where(s => s.CustomerId == c.Id && s.Status == "Active" && s.EndDate >= now)
+                        .OrderByDescending(s => s.EndDate)
+                        .Select(s => s.SubscriptionPlan.PlanName)
+                        .FirstOrDefault() ?? "No Active Plan",
+                    HasUnpaidInvoices = _context.Invoices.Any(i => i.CustomerId == c.Id && !i.IsPaid)
+                })
+                .ToListAsync();
+
+            return View(customers);
+        }
+
+        [HttpGet]
+        public IActionResult CreateCustomer()
+        {
+            return View(new AdminCreateCustomerViewModel
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Email = string.Empty,
+                Password = string.Empty,
+                CompanyName = string.Empty,
+                TaxNumber = string.Empty,
+                Address = string.Empty
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateCustomer(AdminCreateCustomerViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var emailExists = await _context.Customers.AnyAsync(c => c.Email == model.Email.Trim());
+            if (emailExists)
+            {
+                ModelState.AddModelError(nameof(model.Email), "A customer with this email already exists.");
+                return View(model);
+            }
+
+            var customer = new Customer
+            {
+                FirstName = model.FirstName.Trim(),
+                LastName = model.LastName.Trim(),
+                Email = model.Email.Trim(),
+                Password = model.Password,
+                CompanyName = model.CompanyName.Trim(),
+                TaxNumber = model.TaxNumber.Trim(),
+                Address = model.Address.Trim(),
+                PhoneNumber = "+61 0000 0000",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+            await LogAdminAction($"Created customer account: {customer.FirstName} {customer.LastName} (Id: {customer.Id}).");
+
+            TempData["CustomerMessage"] = "Customer created successfully.";
+            return RedirectToAction(nameof(ManageCustomers));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditCustomer(int id)
+        {
+            var customer = await _context.Customers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (customer is null)
+            {
+                return NotFound();
+            }
+
+            var activePlan = await _context.Subscriptions
+                .Where(s => s.CustomerId == id && s.Status == "Active" && s.EndDate >= DateTime.UtcNow)
+                .OrderByDescending(s => s.EndDate)
+                .Select(s => s.SubscriptionPlan.PlanName)
+                .FirstOrDefaultAsync();
+
+            var invoices = await _context.Invoices
+                .AsNoTracking()
+                .Where(i => i.CustomerId == id)
+                .OrderByDescending(i => i.IssueDate)
+                .Select(i => new AdminCustomerInvoiceViewModel
+                {
+                    Id = i.Id,
+                    IssueDate = i.IssueDate,
+                    DueDate = i.DueDate,
+                    TotalAmount = i.TotalAmount,
+                    IsPaid = i.IsPaid
+                })
+                .ToListAsync();
+
+            var model = new AdminCustomerEditViewModel
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.Email,
+                CompanyName = customer.CompanyName,
+                TaxNumber = customer.TaxNumber,
+                Address = customer.Address
+            };
+
+            ViewBag.CurrentActivePlan = activePlan ?? "No Active Plan";
+            ViewBag.Invoices = invoices;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCustomer(int id, AdminCustomerEditViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            if (customer is null)
+            {
+                return NotFound();
+            }
+
+            var emailExists = await _context.Customers
+                .AnyAsync(c => c.Id != id && c.Email == model.Email.Trim());
+
+            if (emailExists)
+            {
+                ModelState.AddModelError(nameof(model.Email), "A customer with this email already exists.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var invoices = await _context.Invoices
+                    .AsNoTracking()
+                    .Where(i => i.CustomerId == id)
+                    .OrderByDescending(i => i.IssueDate)
+                    .Select(i => new AdminCustomerInvoiceViewModel
+                    {
+                        Id = i.Id,
+                        IssueDate = i.IssueDate,
+                        DueDate = i.DueDate,
+                        TotalAmount = i.TotalAmount,
+                        IsPaid = i.IsPaid
+                    })
+                    .ToListAsync();
+
+                var activePlan = await _context.Subscriptions
+                    .Where(s => s.CustomerId == id && s.Status == "Active" && s.EndDate >= DateTime.UtcNow)
+                    .OrderByDescending(s => s.EndDate)
+                    .Select(s => s.SubscriptionPlan.PlanName)
+                    .FirstOrDefaultAsync() ?? "No Active Plan";
+
+                ViewBag.CurrentActivePlan = activePlan;
+                ViewBag.Invoices = invoices;
+
+                return View(model);
+            }
+            customer.FirstName = model.FirstName.Trim();
+            customer.LastName = model.LastName.Trim();
+            customer.Email = model.Email.Trim();
+            customer.CompanyName = model.CompanyName.Trim();
+            customer.TaxNumber = model.TaxNumber.Trim();
+            customer.Address = model.Address.Trim();
+
+            var affectedRows = await _context.SaveChangesAsync();
+            if (affectedRows > 0)
+            {
+                await LogAdminAction($"Updated customer profile: {customer.FirstName} {customer.LastName} (Id: {customer.Id}).");
+            }
+
+            TempData["CustomerMessage"] = "Customer details updated successfully.";
+            return RedirectToAction(nameof(EditCustomer), new { id = customer.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateInvoiceStatus(int id, int customerId, bool isPaid)
+        {
+            var invoice = await _context.Invoices
+                .FirstOrDefaultAsync(i => i.Id == id && i.CustomerId == customerId);
+
+            if (invoice is null)
+            {
+                return NotFound();
+            }
+
+            if (invoice.IsPaid != isPaid)
+            {
+                invoice.IsPaid = isPaid;
+                await _context.SaveChangesAsync();
+                await LogAdminAction($"Changed invoice #{invoice.Id} for customer #{invoice.CustomerId} to {(isPaid ? "Paid" : "Unpaid")}." );
+            }
+
+            TempData["CustomerMessage"] = $"Invoice #{invoice.Id} marked as {(isPaid ? "Paid" : "Unpaid")}.";
+            return RedirectToAction(nameof(EditCustomer), new { id = customerId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AdminUsers()
+        {
+            var admins = await _context.Admins
+                .AsNoTracking()
+                .OrderBy(a => a.Id)
+                .Select(a => new AdminUserListItemViewModel
+                {
+                    Id = a.Id,
+                    FullName = a.FirstName + " " + a.LastName,
+                    Email = a.Email
+                })
+                .ToListAsync();
+
+            return View(admins);
         }
 
         [HttpGet]
